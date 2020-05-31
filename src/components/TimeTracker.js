@@ -22,11 +22,12 @@ class TimeTracker extends React.Component {
     this.state = this.getInitialState();
     this.loadEntries = this.loadEntries.bind(this);
     this.renderEntries = this.renderEntries.bind(this);
+    this.onTitleChange = this.onTitleChange.bind(this);
     this.save = this.save.bind(this);
   }
 
   getInitialState() {
-    return { entries: [], docId: null, hasChanged: false }
+    return { entries: [], docId: null, hasChanged: false, title: '' }
   }
   componentDidMount() {
     this.loadEntries();
@@ -50,6 +51,7 @@ class TimeTracker extends React.Component {
         querySnapshot.forEach((doc) => {
           // items.push(doc.data().data);
           this.setState({docId: doc.id})
+          this.setState({title: doc.data().title})
           items = doc.data().data;
         });
         console.log(items);
@@ -155,6 +157,7 @@ class TimeTracker extends React.Component {
       this.props.db.collection("entries")
       .add({
         date: this.props.date,
+        title: this.state.title,
         data: this.transformForSave()
       }).then(
         () => {
@@ -169,6 +172,7 @@ class TimeTracker extends React.Component {
     this.props.db.collection("entries")
       .doc(this.state.docId)
       .update({
+        title: this.state.title,
         data: this.transformForSave()
       }).then(
         () => {
@@ -196,9 +200,24 @@ class TimeTracker extends React.Component {
     return out;
   }
 
+  onTitleChange(e, data) {
+    this.setState({title: data.value});
+    if(!this.state.hasChanged) {
+      this.setState({hasChanged: true});
+    }
+  }
+
   render() {
     return (
       <>
+        <Input
+          fluid
+          inverted
+          transparent
+          placeholder="Untitled day"
+          defaultValue={this.state.title} size="massive"
+          onChange={this.onTitleChange}
+          style={{fontSize: '2.5em'}} />
         <Table inverted celled compact selectable fixed>
           <Table.Header>
             <Table.Row>
