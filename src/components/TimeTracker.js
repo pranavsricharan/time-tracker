@@ -153,7 +153,6 @@ class TimeTracker extends React.Component {
 
     if (this.state.docId === null) {
       this.props.db.collection("entries")
-      .doc(this.state.docId)
       .add({
         date: this.props.date,
         data: this.transformForSave()
