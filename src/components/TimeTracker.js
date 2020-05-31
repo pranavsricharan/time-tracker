@@ -50,8 +50,7 @@ class TimeTracker extends React.Component {
       .then((querySnapshot) => {
         querySnapshot.forEach((doc) => {
           // items.push(doc.data().data);
-          this.setState({docId: doc.id})
-          this.setState({title: doc.data().title})
+          this.setState({docId: doc.id, title: doc.data().title})
           items = doc.data().data;
         });
         console.log(items);
@@ -94,7 +93,7 @@ class TimeTracker extends React.Component {
           console.log(data);
           console.log({this: this});
           this[field] = data.value;
-          if(that.state.hasChanged == false)
+          if(that.state.hasChanged === false)
             that.setState({hasChanged: true});
         }
       };
@@ -215,7 +214,7 @@ class TimeTracker extends React.Component {
           inverted
           transparent
           placeholder="Untitled day"
-          defaultValue={this.state.title} size="massive"
+          value={this.state.title} size="massive"
           onChange={this.onTitleChange}
           style={{fontSize: '2.5em'}} />
         <Table inverted celled compact selectable fixed>
