@@ -118,7 +118,7 @@ class TimeTracker extends React.Component {
       return;
     }
     return this.state.entries.map((entry) => (
-      <Table.Row key={Math.random()}>
+      <Table.Row key={`${this.props.date}-${entry.start}-${entry.end}`}>
         <Table.Cell>
           {entry.start} - {entry.end}
         </Table.Cell>
