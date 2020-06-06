@@ -159,8 +159,8 @@ class TimeTracker extends React.Component {
         title: this.state.title,
         data: this.transformForSave()
       }).then(
-        () => {
-          this.setState({hasChanged: false});
+        (docRef) => {
+          this.setState({hasChanged: false, docId: docRef.id});
           console.log('saved');
         }
       );
