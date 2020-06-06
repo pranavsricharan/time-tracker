@@ -1,24 +1,35 @@
 import React from "react";
+import ReactDatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
+
 import {
-  Table,
   Button,
-  Icon,
-  Input,
-  Loader,
-} from "semantic-ui-react";
+  Paper,
+  Table,
+  TableBody,
+  TableRow,
+  TableHead,
+  TableCell,
+  TableContainer,
+  Snackbar,
+  InputBase,
+  CircularProgress
+} from "@material-ui/core";
+import {Alert} from "@material-ui/lab";
+import TodayIcon from "@material-ui/icons/Today";
+import SaveIcon from "@material-ui/icons/Save";
 import moment from "moment";
 
 class TimeTracker extends React.Component {
   slotDuration = moment.duration(30, "m");
   hasChanged = false;
   static defaultProps = {
-    'date': moment().format('YYYY-MM-DD'),
-    'db': null
-  }
+    date: moment().format("YYYY-MM-DD"),
+    db: null,
+  };
 
   constructor(props) {
     super(props);
-    console.log('the date', this.props.date)
     this.state = this.getInitialState();
     this.loadEntries = this.loadEntries.bind(this);
     this.renderEntries = this.renderEntries.bind(this);
@@ -27,15 +38,22 @@ class TimeTracker extends React.Component {
   }
 
   getInitialState() {
-    return { entries: [], docId: null, hasChanged: false, title: '' }
+    return {
+      date: moment().format("YYYY-MM-DD"),
+      entries: [],
+      docId: null,
+      hasChanged: false,
+      title: "",
+      snackbarOpen: false,
+    };
   }
   componentDidMount() {
     this.loadEntries();
   }
 
   componentDidUpdate(prevProps) {
-    if (prevProps.date !== this.props.date) {
-      this.setState(this.getInitialState())
+    if (prevProps.date !== this.state.date) {
+      this.setState(this.getInitialState());
       this.loadEntries();
     }
   }
@@ -45,12 +63,12 @@ class TimeTracker extends React.Component {
     let items = [];
     this.props.db
       .collection("entries")
-      .where("date", "==", this.props.date)
+      .where("date", "==", this.state.date)
       .get()
       .then((querySnapshot) => {
         querySnapshot.forEach((doc) => {
           // items.push(doc.data().data);
-          this.setState({docId: doc.id, title: doc.data().title})
+          this.setState({ docId: doc.id, title: doc.data().title });
           items = doc.data().data;
         });
         console.log(items);
@@ -68,7 +86,7 @@ class TimeTracker extends React.Component {
         console.log(time);
         data[time.format("HH:mm")] = {
           title: item.title,
-          outcome: item.outcome
+          outcome: item.outcome,
         };
         time = time.clone().add(this.slotDuration);
       }
@@ -76,8 +94,8 @@ class TimeTracker extends React.Component {
     console.log({ data });
 
     let transformedEntries = [];
-    let start = moment(this.props.date).startOf("date");
-    let end = moment(this.props.date).endOf("date");
+    let start = moment(this.state.date).startOf("date");
+    let end = moment(this.state.date).endOf("date");
 
     console.log({ start: start.toString(), end: end.toString() });
 
@@ -89,13 +107,12 @@ class TimeTracker extends React.Component {
         end: time.clone().add(this.slotDuration).format("HH:mm"),
         title: "",
         outcome: "",
-        onChange: function(e, data, field, that) {
-          console.log(data);
-          console.log({this: this});
-          this[field] = data.value;
-          if(that.state.hasChanged === false)
-            that.setState({hasChanged: true});
-        }
+        onChange: function (e, field, that) {
+          console.log({ this: this });
+          this[field] = e.target.value;
+          if (that.state.hasChanged === false)
+            that.setState({ hasChanged: true });
+        },
       };
 
       if (!!data[startKey]) {
@@ -118,31 +135,36 @@ class TimeTracker extends React.Component {
       return;
     }
     return this.state.entries.map((entry) => (
-      <Table.Row key={`${this.props.date}-${entry.start}-${entry.end}`}>
-        <Table.Cell>
+      <TableRow key={`${this.state.date}-${entry.start}-${entry.end}`}>
+        <TableCell>
           {entry.start} - {entry.end}
-        </Table.Cell>
-        <Table.Cell>
-          <Input
-            inverted
-            transparent
+        </TableCell>
+        <TableCell>
+          <InputBase
             placeholder="Add title"
             defaultValue={entry.title}
-            onChange={(e, data) => {entry.onChange(e, data, "title", this)}}
-            fluid={true}
+            onChange={(e, data) => {
+              entry.onChange(e, "title", this);
+            }}
+            fullWidth
+            margin="none"
           />
-        </Table.Cell>
-        <Table.Cell>
-          <Input
-            inverted
-            transparent
+        </TableCell>
+        <TableCell>
+          <InputBase
             placeholder="Add outcome"
             defaultValue={entry.outcome}
-            onChange={(e, data) => {entry.onChange(e, data, "outcome", this)}}
-            fluid={true}
+            onChange={(e, data) => {
+              entry.onChange(e, "outcome", this);
+            }}
+            fullWidth
+            multiline
+            rowsMax={3}
+            size="small"
+            margin="none"
           />
-        </Table.Cell>
-      </Table.Row>
+        </TableCell>
+      </TableRow>
     ));
   }
 
@@ -155,12 +177,16 @@ class TimeTracker extends React.Component {
     if (this.state.docId === null) {
       this.props.db.collection("entries")
       .add({
-        date: this.props.date,
+        date: this.state.date,
         title: this.state.title,
         data: this.transformForSave()
       }).then(
         (docRef) => {
-          this.setState({hasChanged: false, docId: docRef.id});
+          this.setState({
+            hasChanged: false,
+            docId: docRef.id,
+            snackbarOpen: true
+          });
           console.log('saved');
         }
       );
@@ -168,92 +194,145 @@ class TimeTracker extends React.Component {
       return;
     }
 
-    this.props.db.collection("entries")
+    this.props.db
+      .collection("entries")
       .doc(this.state.docId)
       .update({
         title: this.state.title,
-        data: this.transformForSave()
-      }).then(
-        () => {
-          this.setState({hasChanged: false});
-          console.log('saved');
-        }
-      );
+        data: this.transformForSave(),
+      })
+      .then(() => {
+        this.setState({ hasChanged: false, snackbarOpen: true });
+        console.log("saved");
+      });
   }
 
   transformForSave() {
-    let out = []
-    this.state.entries.forEach(entry => {
-      if(!!entry.title || !! entry.outcome) {
-        out.push(
-          {
-            start: `${this.props.date} ${entry.start}`,
-            end:  `${this.props.date} ${entry.end}`,
-            title: entry.title,
-            outcome: entry.outcome
-          }
-        )
+    let out = [];
+    this.state.entries.forEach((entry) => {
+      if (!!entry.title || !!entry.outcome) {
+        out.push({
+          start: `${this.state.date} ${entry.start}`,
+          end: `${this.state.date} ${entry.end}`,
+          title: entry.title,
+          outcome: entry.outcome,
+        });
       }
     });
     console.log(out);
     return out;
   }
 
-  onTitleChange(e, data) {
-    this.setState({title: data.value});
-    if(!this.state.hasChanged) {
-      this.setState({hasChanged: true});
+  onTitleChange(e) {
+    this.setState({ title: e.target.value });
+    if (!this.state.hasChanged) {
+      this.setState({ hasChanged: true });
     }
   }
 
   render() {
     return (
       <>
-        <Input
-          fluid
-          inverted
-          transparent
-          placeholder="Untitled day"
-          value={this.state.title} size="massive"
-          onChange={this.onTitleChange}
-          style={{fontSize: '2.5em'}} />
-        <Table inverted celled compact selectable fixed>
-          <Table.Header>
-            <Table.Row>
-              <Table.HeaderCell width="2">Time</Table.HeaderCell>
-              <Table.HeaderCell width="6">Activity</Table.HeaderCell>
-              <Table.HeaderCell width="8">Outcome</Table.HeaderCell>
-            </Table.Row>
-          </Table.Header>
-          <Table.Body>
-            {this.renderEntries() || (
-              <Table.Row textAlign="center">
-                <Table.Cell colSpan="3"><Loader active inverted inline='centered' /></Table.Cell>
-              </Table.Row>
-            )}
-          </Table.Body>
-          {this.state.entries.length > 0 && (
-            <Table.Footer fullWidth>
-              <Table.Row>
-                <Table.HeaderCell colSpan="3">
-                  <Button
-                    floated="right"
-                    icon
-                    labelPosition="left"
-                    primary
-                    size="small"
-                    onClick={this.save}
-                    disabled={!this.state.hasChanged}
-                  >
-                    <Icon name="save" />
-                    Save
-                  </Button>
-                </Table.HeaderCell>
-              </Table.Row>
-            </Table.Footer>
-          )}
-        </Table>
+        <div style={{ textAlign: "right" }}>
+          <Button
+            variant="outlined"
+            color="default"
+            size="large"
+            startIcon={<SaveIcon />}
+            disabled={!this.state.hasChanged}
+            onClick={this.save}
+          >
+            Save
+          </Button>
+        </div>
+        <div style={{ clear: "both" }}></div>
+        <div style={{ display: "flex", margin: "1em 0" }}>
+          <div>
+            <ReactDatePicker
+              customInput={<DateLabel />}
+              value={this.state.date}
+              onChange={(date) => {
+                console.log({ date: moment(date).format("YYYY-MM-DD") });
+                this.setState({ date: moment(date).format("YYYY-MM-DD") });
+              }}
+            ></ReactDatePicker>
+          </div>
+          <div style={{ flex: "1", marginLeft: "1em" }}>
+            <InputBase
+              key={`${this.state.date}-title`}
+              placeholder="Day Title"
+              type="text"
+              variant="outlined"
+              fullWidth
+              margin="dense"
+              size="small"
+              value={this.state.title}
+              onChange={this.onTitleChange}
+              style={{ fontSize: "2em" }}
+            />
+          </div>
+        </div>
+        <TableContainer component={Paper}>
+          <Table size="small">
+            <TableHead>
+              <TableRow>
+                <TableCell variant="head" width="12.5%">
+                  Time
+                </TableCell>
+                <TableCell variant="head" width="37.5%">
+                  Activity
+                </TableCell>
+                <TableCell variant="head">Outcome</TableCell>
+              </TableRow>
+            </TableHead>
+            <TableBody>
+              {this.renderEntries() || (
+                <TableRow textAlign="center">
+                  <TableCell colSpan="3" align="center">
+                    <CircularProgress disableShrink />
+                  </TableCell>
+                </TableRow>
+              )}
+            </TableBody>
+          </Table>
+        </TableContainer>
+
+        <Snackbar
+          key={"snackbar-" + this.state.snackbarOpen}
+          anchorOrigin={{
+            vertical: "bottom",
+            horizontal: "right",
+          }}
+          open={this.state.snackbarOpen}
+          autoHideDuration={5000}
+          message="Entry saved."
+          onClose={() => this.setState({ snackbarOpen: false })}
+        >
+          <Alert
+            onClose={() => this.setState({ snackbarOpen: false })}
+            severity="success"
+          >
+            Entry Saved
+          </Alert>
+        </Snackbar>
       </>
+    );
+  }
+}
+
+class DateLabel extends React.Component {
+  render() {
+    return (
+      <Button
+        variant="contained"
+        disableElevation
+        color="primary"
+        size="large"
+        startIcon={<TodayIcon />}
+        onClick={this.props.onClick}
+      >
+        {moment(this.props.value).format("ll")}
+      </Button>
     );
   }
 }

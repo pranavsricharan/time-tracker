@@ -4,7 +4,6 @@ import './index.css';
 import App from './App';
 import firebaseConfig from './firebase-config.js'
 import * as serviceWorker from './serviceWorker';
-import 'semantic-ui-css/semantic.min.css'
 
 const firebase = require("firebase");
 // Required for side-effects
