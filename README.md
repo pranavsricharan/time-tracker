@@ -19,11 +19,10 @@ yarn start # or npm start
 ```
 
 ## TODO
-[ ] Write unit tests
-[ ] Migrate to TypeScript
-[x] ~~Code cleanup~~
-[ ] Support variable time interval (instead of existing 30 mins)
-[x] ~~Switch between dark and light themes~~
-[ ] Authentication
-[ ] Adding labels/tags to activities
-[ ] Visualizing the time spent based on tags
+- [ ] Write unit tests
+- [ ] Migrate to TypeScript
+- [ ] Support variable time interval (instead of existing 30 mins)
+- [x] ~~Switch between dark and light themes~~
+- [ ] Authentication
+- [ ] Adding labels/tags to activities
+- [ ] Visualizing the time spent based on tags
