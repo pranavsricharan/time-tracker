@@ -1,13 +1,22 @@
-import { createMuiTheme } from "@material-ui/core";
+const COLOR_PRIMARY = '#2185d0';
 
-const DEFAULT_THEME = createMuiTheme({
+const DEFAULT_THEME = {
   palette: {
       type: 'dark',
       primary: {
-          main: '#2185d0',
+          main: COLOR_PRIMARY,
       },
       
   }
-});
+};
 
-export { DEFAULT_THEME }
+const LIGHT_THEME = {
+  palette: {
+      primary: {
+          main: COLOR_PRIMARY,
+      },
+      
+  }
+};
+
+export { DEFAULT_THEME, LIGHT_THEME }

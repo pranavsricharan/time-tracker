@@ -48,7 +48,7 @@ export default class TimeTrackerHeader extends React.Component {
               fullWidth
               margin="dense"
               size="small"
-              value={this.props.title}
+              value={this.props.title || ""}
               onChange={this.props.onTitleChange}
               style={{ fontSize: "2em" }}
             />
