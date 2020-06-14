@@ -7,10 +7,25 @@ import TimeTrackerTable from "./TimeTrackerTable";
 import EntryService from "../service/EntryService";
 import { transformEntries, transformForSave } from '../helpers/entryHelpers';
 import TimeTrackerHeader from "./TimeTrackerHeader";
+import { Entry } from "../models/entry";
 
-export default class TimeTrackerPage extends React.Component {
+type TimeTrackerPageProps = {
+
+}
+
+type TimeTrackerPageState = {
+  date: string,
+  docId: string,
+  title: string,
+  entries: Entry[],
+  snackbarOpen: boolean,
+  hasChanged: boolean
+}
+
+export default class TimeTrackerPage extends React.Component<TimeTrackerPageProps, TimeTrackerPageState> {
   slotDuration = moment.duration(30, "m");
   hasChanged = false;
+  private entryService: EntryService;
 
   constructor(props) {
     super(props);
