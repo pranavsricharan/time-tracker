@@ -6,7 +6,13 @@ import TodayIcon from "@material-ui/icons/Today";
 import SaveIcon from "@material-ui/icons/Save";
 import moment from "moment";
 
-class DateLabel extends React.Component {
+
+type DateLabelProps = {
+  value?: string,
+  onClick?: (event: React.MouseEvent) => void
+
+}
+class DateLabel extends React.Component<DateLabelProps> {
   render() {
     return (
       <Button
@@ -21,9 +27,18 @@ class DateLabel extends React.Component {
       </Button>
     );
   }
-}
+};
 
-export default class TimeTrackerHeader extends React.Component {
+type TimeTrackerHeaderProps = {
+  title: string,
+  date: string,
+  hasChanged: boolean,
+  onTitleChange: (event: React.ChangeEvent) => void,
+  onDateChange: (date: Date | null) => void,
+  onSave: (event: React.MouseEvent) => void
+};
+
+export default class TimeTrackerHeader extends React.Component<TimeTrackerHeaderProps> {
 
   render() {
     return (
@@ -44,10 +59,8 @@ export default class TimeTrackerHeader extends React.Component {
               key={`${this.props.date}-title`}
               placeholder="Day Title"
               type="text"
-              variant="outlined"
               fullWidth
               margin="dense"
-              size="small"
               value={this.props.title || ""}
               onChange={this.props.onTitleChange}
               style={{ fontSize: "2em" }}
