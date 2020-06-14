@@ -37,7 +37,7 @@ class LocalStore {
   }
 
   setValue(key, value) {};
-  getValue(key, defaultValue) {};
+  getValue(key, defaultValue): string { return '' };
   
   _setCookie(key, value) {
     const jsonValue = JSON.stringify(value);
@@ -49,7 +49,7 @@ class LocalStore {
     window.localStorage.setItem(key, value);
   }
 
-  _getCookie(key, defaultValue) {
+  _getCookie(key, defaultValue): string {
     const cookieEntry = document.cookie
       .split('; ')
       .find(entry => entry.startsWith(`${key}=`));
@@ -62,7 +62,7 @@ class LocalStore {
       return defaultValue || null;
   }
 
-  _getFromLocalStorage(key, defaultValue) {
+  _getFromLocalStorage(key, defaultValue): string {
     const value = window.localStorage.getItem(key);
 
     return value || defaultValue || null;

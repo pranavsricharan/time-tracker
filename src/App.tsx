@@ -9,7 +9,11 @@ import TimeTrackerPage from "./components/TimeTrackerPage";
 import Constants from './config/constants';
 import localDataService from './service/LocalDataService';
 
-class App extends React.Component {
+type AppState = {
+  themeName: string
+}
+
+class App extends React.Component<{}, AppState> {
 
   constructor(props) {
     super(props);
