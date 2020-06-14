@@ -1,4 +1,4 @@
-import React from "react";
+import React, { HTMLProps } from "react";
 import {
   TableContainer,
   Table,
@@ -10,13 +10,18 @@ import {
   CircularProgress,
   Paper
 } from "@material-ui/core";
+import { Entry } from "../models/entry";
 
-export default class TimeTrackerTable extends React.Component {
+interface TimeTrackerTableProps extends HTMLProps<HTMLDivElement> {
+  date?: string,
+  entries: Entry[]
+}
+export default class TimeTrackerTable extends React.Component<TimeTrackerTableProps> {
   static defaultProps = {
-    entries: {}
+    entries: []
   };
 
-  constructor(props) {
+  constructor(props: TimeTrackerTableProps) {
     super(props);
     this.state = {};
     this.renderEntries = this.renderEntries.bind(this);
@@ -47,12 +52,11 @@ export default class TimeTrackerTable extends React.Component {
             placeholder="Add outcome"
             defaultValue={entry.outcome}
             onChange={(e) => {
-              entry.onChange(e, "outcome", this);
+              entry.onChange(e, "outcome");
             }}
             fullWidth
             multiline
             rowsMax={3}
-            size="small"
             margin="none"
           />
         </TableCell>
@@ -66,10 +70,10 @@ export default class TimeTrackerTable extends React.Component {
         <Table size="small">
           <TableHead>
             <TableRow>
-              <TableCell variant="head" width="12.5%">
+              <TableCell variant="head" style={{width: "12.5%"}}>
                 Time
               </TableCell>
-              <TableCell variant="head" width="37.5%">
+              <TableCell variant="head" style={{width: "37.5%"}}>
                 Activity
               </TableCell>
               <TableCell variant="head">Outcome</TableCell>
@@ -77,8 +81,8 @@ export default class TimeTrackerTable extends React.Component {
           </TableHead>
           <TableBody>
             {this.renderEntries() || (
-              <TableRow textalign="center">
-                <TableCell colSpan="3" align="center">
+              <TableRow>
+                <TableCell colSpan={3} align="center">
                   <CircularProgress disableShrink />
                 </TableCell>
               </TableRow>
