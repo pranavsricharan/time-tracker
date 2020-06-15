@@ -1,9 +1,7 @@
-
-import firebaseConfig from '../config/firebase-config.js'
-
-const firebase = require("firebase");
+import firebaseConfig from '../config/firebase-config'
+import * as firebase from 'firebase/app'
 // Required for side-effects
-require("firebase/firestore");
+import 'firebase/firestore';
 
 
 // Initialize Firebase

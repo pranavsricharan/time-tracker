@@ -3,7 +3,7 @@ import datastore from "../persistence/datastore";
 const ENTRY_COLLECTION_NAME = 'entries';
 
 export default class EntryService {
-  async fetchEntriesForDate(date) {
+  async fetchEntriesForDate(date: string) {
     let items = [];
     let docId = null;
     let title = null;
@@ -53,7 +53,7 @@ export default class EntryService {
   async _insertEntry(data) {
     let insertedDocId = null;
     try {
-      let docRef = datastore.collection(ENTRY_COLLECTION_NAME)
+      let docRef = await datastore.collection(ENTRY_COLLECTION_NAME)
       .add({
         date: data.date,
         title: data.title,
