@@ -1,12 +1,13 @@
 import localStore from '../persistence/localstore';
 import Constants from '../config/constants';
 import { DEFAULT_THEME, LIGHT_THEME } from '../config/theme';
+import { ThemeOptions } from '@material-ui/core';
 
 class LocalDataService {
   getThemeName(): string {
     return localStore.getValue('theme', Constants.THEME.DEFAULT);
   }
-  getTheme(): any {
+  getTheme(): ThemeOptions {
     const userTheme: string = localStore.getValue('theme', Constants.THEME.DEFAULT);
 
     return (userTheme === Constants.THEME.LIGHT)
@@ -14,7 +15,7 @@ class LocalDataService {
     : DEFAULT_THEME;
   }
 
-  setTheme(theme) {
+  setTheme(theme: string) {
     localStore.setValue('theme', theme);
   }
 }
