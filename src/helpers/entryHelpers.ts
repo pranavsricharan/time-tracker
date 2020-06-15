@@ -1,6 +1,12 @@
 import moment from "moment";
+import { Entry } from "../models/entry";
 
-const transformEntries = (items, date, slotDuration, onChange) => {
+const transformEntries = (
+    items: Entry[],
+    date: string,
+    slotDuration: moment.Duration,
+    onChange: () => void
+  ) => {
   let data = {};
 
   items.forEach((item) => {
