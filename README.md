@@ -20,7 +20,7 @@ yarn start # or npm start
 
 ## TODO
 - [ ] Write unit tests
-- [ ] Migrate to TypeScript
+- [x] ~~Migrate to TypeScript~~
 - [ ] Support variable time interval (instead of existing 30 mins)
 - [x] ~~Switch between dark and light themes~~
 - [ ] Authentication

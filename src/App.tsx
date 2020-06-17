@@ -15,7 +15,7 @@ type AppState = {
 
 class App extends React.Component<{}, AppState> {
 
-  constructor(props) {
+  constructor(props: any) {
     super(props);
     this.state = {
       themeName: localDataService.getThemeName(),
@@ -24,8 +24,8 @@ class App extends React.Component<{}, AppState> {
     this.changeTheme = this.changeTheme.bind(this);
   }
 
-  changeTheme(e) {
-    const selectedTheme = (e.target.checked)
+  changeTheme(e: React.ChangeEvent, checked: boolean) {
+    const selectedTheme = (checked)
       ? Constants.THEME.DEFAULT
       : Constants.THEME.LIGHT;
     localDataService.setTheme(selectedTheme);

@@ -1,7 +1,7 @@
 // Snippet from MDN
 // https://developer.mozilla.org/en-US/docs/Web/API/Web_Storage_API/Using_the_Web_Storage_API
 const localStorageAvailable = () => {
-  let storage;
+  let storage: Storage | null = null;
   try {
       storage = window['localStorage'];
       var x = '__storage_test__';
@@ -36,20 +36,20 @@ class LocalStore {
     }
   }
 
-  setValue(key, value) {};
-  getValue(key, defaultValue): string { return '' };
+  setValue(key: string, value: any) {};
+  getValue(key: string, defaultValue: any): any { return '' };
   
-  _setCookie(key, value) {
+  _setCookie(key: string, value: any) {
     const jsonValue = JSON.stringify(value);
     const cookieString = `${key}=${encodeURIComponent(jsonValue)}`
     document.cookie = cookieString;
   }
 
-  _setToLocalStorage(key, value) {
+  _setToLocalStorage(key: string, value: any) {
     window.localStorage.setItem(key, value);
   }
 
-  _getCookie(key, defaultValue): string {
+  _getCookie(key: string, defaultValue: any): any {
     const cookieEntry = document.cookie
       .split('; ')
       .find(entry => entry.startsWith(`${key}=`));
@@ -62,7 +62,7 @@ class LocalStore {
       return defaultValue || null;
   }
 
-  _getFromLocalStorage(key, defaultValue): string {
+  _getFromLocalStorage(key: string, defaultValue: any): any {
     const value = window.localStorage.getItem(key);
 
     return value || defaultValue || null;

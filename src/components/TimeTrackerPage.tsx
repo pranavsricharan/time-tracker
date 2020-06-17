@@ -15,8 +15,8 @@ type TimeTrackerPageProps = {
 
 type TimeTrackerPageState = {
   date: string,
-  docId: string,
-  title: string,
+  docId: string | null | undefined,
+  title: string | null | undefined,
   entries: Entry[],
   snackbarOpen: boolean,
   hasChanged: boolean
@@ -27,7 +27,7 @@ export default class TimeTrackerPage extends React.Component<TimeTrackerPageProp
   hasChanged = false;
   private entryService: EntryService;
 
-  constructor(props) {
+  constructor(props: TimeTrackerPageProps) {
     super(props);
     this.state = this.getInitialState();
     this.entryService = new EntryService();
@@ -52,13 +52,13 @@ export default class TimeTrackerPage extends React.Component<TimeTrackerPageProp
     this.loadEntries();
   }
 
-  componentDidUpdate(prevProps, prevState) {
+  componentDidUpdate(prevProps: TimeTrackerPageProps, prevState: TimeTrackerPageState) {
     if (prevState.date !== this.state.date) {
       this.loadEntries();
     }
   }
 
-  changeDate(date) {
+  changeDate(date: Date | null) {
     let dateString = moment(date).format('YYYY-MM-DD')
     if(dateString !== this.state.date) {
       let initialState = this.getInitialState();
@@ -86,7 +86,7 @@ export default class TimeTrackerPage extends React.Component<TimeTrackerPageProp
     });
   }
 
-  async save(e) {
+  async save(e: React.MouseEvent) {
     e.preventDefault();
     if (!this.state.hasChanged) {
       return;
@@ -108,7 +108,7 @@ export default class TimeTrackerPage extends React.Component<TimeTrackerPageProp
     });
   }
 
-  onTitleChange(e) {
+  onTitleChange(e: React.ChangeEvent<HTMLInputElement>) {
     this.setState({ title: e.target.value });
     if (!this.state.hasChanged) {
       this.setState({ hasChanged: true });

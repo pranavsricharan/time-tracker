@@ -1,10 +1,11 @@
 import datastore from "../persistence/datastore";
+import { Entry } from "../models/entry";
 
 const ENTRY_COLLECTION_NAME = 'entries';
 
 export default class EntryService {
   async fetchEntriesForDate(date: string) {
-    let items = [];
+    let items: Entry[] = [];
     let docId = null;
     let title = null;
 
@@ -26,7 +27,7 @@ export default class EntryService {
     return { docId, title, items };
   }
 
-  async setEntry(docId, data) {
+  async setEntry(docId: string | null | undefined, data: any) {
     if (!!docId) {
       await this._updateEntry(docId, data);
       return null;
@@ -36,7 +37,7 @@ export default class EntryService {
     }
   }
 
-  async _updateEntry(docId, data) {
+  async _updateEntry(docId: string, data: any) {
     try {
       await datastore
         .collection(ENTRY_COLLECTION_NAME)
@@ -50,7 +51,7 @@ export default class EntryService {
     }
   }
 
-  async _insertEntry(data) {
+  async _insertEntry(data: any) {
     let insertedDocId = null;
     try {
       let docRef = await datastore.collection(ENTRY_COLLECTION_NAME)

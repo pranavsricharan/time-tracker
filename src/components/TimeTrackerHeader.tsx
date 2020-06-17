@@ -30,10 +30,10 @@ class DateLabel extends React.Component<DateLabelProps> {
 };
 
 type TimeTrackerHeaderProps = {
-  title: string,
+  title: string | null | undefined,
   date: string,
   hasChanged: boolean,
-  onTitleChange: (event: React.ChangeEvent) => void,
+  onTitleChange: (event: React.ChangeEvent<HTMLInputElement>) => void,
   onDateChange: (date: Date | null) => void,
   onSave: (event: React.MouseEvent) => void
 };

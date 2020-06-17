@@ -1,5 +1,7 @@
+import React from 'react';
 import moment from "moment";
 import { Entry } from "../models/entry";
+
 
 const transformEntries = (
     items: Entry[],
@@ -7,7 +9,7 @@ const transformEntries = (
     slotDuration: moment.Duration,
     onChange: () => void
   ) => {
-  let data = {};
+  let data:  {[key: string]: Entry} = {};
 
   items.forEach((item) => {
     let time = moment(item.start);
@@ -26,12 +28,15 @@ const transformEntries = (
   let time = start.clone();
   for (let i = 0; i < 48; i++) {
     let startKey = time.format("HH:mm");
-    let item = {
+    let item: Entry = {
       start: startKey,
       end: time.clone().add(slotDuration).format("HH:mm"),
       title: "",
       outcome: "",
-      onChange: function (e, field) {
+      onChange: function (
+          e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
+          field: "title" | "outcome"
+      ) {
         this[field] = e.target.value;
         onChange();
       },
@@ -48,8 +53,8 @@ const transformEntries = (
   return transformedEntries;
 };
 
-const transformForSave = (entries, date) => {
-  let out = [];
+const transformForSave = (entries: Entry[], date: string) => {
+  let out: any[] = [];
   entries.forEach((entry) => {
     if (!!entry.title || !!entry.outcome) {
       out.push({

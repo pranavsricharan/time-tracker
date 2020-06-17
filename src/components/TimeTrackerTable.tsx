@@ -41,7 +41,9 @@ export default class TimeTrackerTable extends React.Component<TimeTrackerTablePr
             placeholder="Add title"
             defaultValue={entry.title}
             onChange={(e) => {
-              entry.onChange(e, "title");
+              if(entry.onChange) {
+                entry.onChange(e, "title");
+              }
             }}
             fullWidth
             margin="none"
@@ -52,7 +54,9 @@ export default class TimeTrackerTable extends React.Component<TimeTrackerTablePr
             placeholder="Add outcome"
             defaultValue={entry.outcome}
             onChange={(e) => {
-              entry.onChange(e, "outcome");
+              if(entry.onChange) {
+                entry.onChange(e, "outcome");
+              }
             }}
             fullWidth
             multiline
