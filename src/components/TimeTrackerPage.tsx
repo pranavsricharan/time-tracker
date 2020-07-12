@@ -8,6 +8,7 @@ import EntryService from "../service/EntryService";
 import { transformEntries, transformForSave } from '../helpers/entryHelpers';
 import TimeTrackerHeader from "./TimeTrackerHeader";
 import { Entry } from "../models/entry";
+import { HotKeys, configure } from "react-hotkeys";
 
 type TimeTrackerPageProps = {
 
@@ -26,6 +27,7 @@ export default class TimeTrackerPage extends React.Component<TimeTrackerPageProp
   slotDuration = moment.duration(30, "m");
   hasChanged = false;
   private entryService: EntryService;
+  public handlers: any;
 
   constructor(props: TimeTrackerPageProps) {
     super(props);
@@ -36,6 +38,12 @@ export default class TimeTrackerPage extends React.Component<TimeTrackerPageProp
     this.onTitleChange = this.onTitleChange.bind(this);
     this.changeDate = this.changeDate.bind(this);
     this.save = this.save.bind(this);
+
+    // react-hotkeys config
+    configure({ignoreTags: []})
+    this.handlers = {
+      SAVE: this.save
+    }
   }
 
   getInitialState() {
@@ -117,7 +125,7 @@ export default class TimeTrackerPage extends React.Component<TimeTrackerPageProp
 
   render() {
     return (
-      <>  
+      <HotKeys handlers={this.handlers}>  
         <TimeTrackerHeader title={this.state.title}
           hasChanged={this.state.hasChanged}
           date={this.state.date}
@@ -145,7 +153,7 @@ export default class TimeTrackerPage extends React.Component<TimeTrackerPageProp
             Entry Saved
           </Alert>
         </Snackbar>
-      </>
+      </HotKeys>
     );
   }
 };

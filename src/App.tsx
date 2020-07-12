@@ -4,6 +4,7 @@ import { Box, CssBaseline, AppBar, Toolbar, Typography, Switch, createMuiTheme }
 import Brightness7Icon from '@material-ui/icons/Brightness7';
 import Brightness3Icon from '@material-ui/icons/Brightness3';
 import { ThemeProvider } from '@material-ui/styles';
+import { HotKeys } from 'react-hotkeys'
 
 import TimeTrackerPage from "./components/TimeTrackerPage";
 import Constants from './config/constants';
@@ -11,6 +12,12 @@ import localDataService from './service/LocalDataService';
 
 type AppState = {
   themeName: string
+}
+
+const modKey = navigator.platform.match("Mac") ? 'command' : 'ctrl';
+
+const hotkeys = {
+  SAVE: `${modKey}+s`
 }
 
 class App extends React.Component<{}, AppState> {
@@ -38,6 +45,7 @@ class App extends React.Component<{}, AppState> {
   render() {
     const theme = createMuiTheme(localDataService.getTheme());
     return (
+      <HotKeys keyMap={hotkeys} root>
       <ThemeProvider theme={theme}>
       <CssBaseline key={this.state.themeName} />
       <Box style={{ paddingBottom: '2em' }}>
@@ -63,6 +71,7 @@ class App extends React.Component<{}, AppState> {
         </Container>
         </Box>
       </ThemeProvider>
+      </HotKeys>
     );
   }
 }
